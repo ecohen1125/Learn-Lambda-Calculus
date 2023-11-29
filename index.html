@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Learn Lambda Calculus: The Fun Way</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <center>
+      <h1>What is Lambda Calculus?</h1>
+      <h4>
+        It is a way for mathematicians to express computations based on function
+        abstraction and application using variable bindings and substitution.
+      </h4>
+      <h3>There are 3 terms that make up Lambda Calculus:</h3>
+      <div class="center">
+        <h3 class="left">1. x</h3>
+        <h3 class="left">2. (λ (x) Body)</h3>
+        <h3 class="left">3. (Rator Rand)</h3>
+      </div>
+      <div class="center2">
+        <h4 class="left">
+          1. This is a variable which can be set to any value
+        </h4>
+        <h4 class="left">
+          2. The second term is a lambda-abstraction, which takes in a variable
+          (x in this example) and a body. The variable is typically in the
+          format of number 1 in the list. The body can be another lambda
+          function or even just some math using the created variable.
+        </h4>
+        <h4 class="left">
+          3. The third term is an application of a function to an argument. It
+          applies the first argument to the second argument. The first argument
+          is typically a lambda function, and the second argument is typically a
+          variable. This is not always the case, but it is the most common. It
+          could be a lambda function applied to another lambda function.
+        </h4>
+      </div>
+      <div class="examples">
+        <h3>Examples of Lambda Calculus (We are using Racket Syntax):</h3>
+        <h4 class="left2">
+          x where x is 5 &#8594; 5 <br>
+          (λ (x) (+ x 2)) where x is 2 &#8594; 4 <br>
+          ((λ (x) (/ 6 x)) 3) &#8594;  2 <br>
+
+        </h4>
+      </div>
+      <h3 class="instructions">
+        <center>Instructions to play the game: <br /></center>
+        <br />
+        You will be presented with a 4x4 grid. Some squares will be filled in
+        with a square with a lambda calculus expression. Your job is to put
+        expression together that hae the same values to merge them into one with
+        a higher value. You can only move the squares up, down, left, or right
+        using WASD or the arrow keys. You can click on a square to reaveal what
+        it evaluates to for help. There will be a button in the bottom right
+        corner that adds corresponding colors to each matching squares.
+        <br />
+        <center>Good Luck!</center>
+      </h3>
+      <button class="play" onclick="location.href='game.html';">Play</button>
+    </center>
+  </body>
+</html>
+
+<script src="script.js"></script>

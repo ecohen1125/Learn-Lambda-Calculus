@@ -1,0 +1,37 @@
+h1 {
+    font-size: 3em;
+}
+
+#board {
+    border: 2px solid black;
+    width: 50%;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.blankTile {
+    width: 23%;
+    margin: 1%;
+    background-color: gray;
+    color: white;
+    border-radius: 15px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.tile {
+    width: 23%;
+    margin: 1%;
+    background-color: #8C111B;
+    color: white;
+    border-radius: 15px;
+    height: 100px;
+    display: flex;
+    align-items: center;
+}
+
+.innerText {
+    text-align: center;
+    width: 100%;
+}

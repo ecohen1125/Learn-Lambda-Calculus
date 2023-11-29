@@ -1,0 +1,41 @@
+.left {
+    text-align: left;
+    /* margin-left: 40%; */
+}
+
+.center {
+    width: 150px;
+    /* text-align: center; */
+    margin: 0 42% auto;
+}
+
+.center2 {
+    width: 85%;
+}
+
+html {
+    background-color: #8E508A;
+    color: #0D0D0D;
+    padding: 1%;
+}
+
+.instructions {
+    text-align: left;
+}
+
+h1 {
+    margin-top: 0px;
+}
+
+.examples {
+    width: 70%;
+}
+
+.left2 {
+    text-align: left;
+    /* margin-left: 10%; */
+}
+
+/* .play {
+
+} */
