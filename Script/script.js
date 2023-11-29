@@ -123,13 +123,9 @@ document.addEventListener("keydown", function (event) {
     }
 });
 function updateScreen() {
-    // console.log(boardState);
     var boardChildren = board === null || board === void 0 ? void 0 : board.childNodes;
     console.log(boardChildren);
     board.replaceChildren();
-    // boardChildren.forEach((child, i) => {
-    //   board?.replaceChild(child, []);
-    // });
     boardState.forEach(function (tile) {
         board === null || board === void 0 ? void 0 : board.appendChild(tile);
     });
@@ -140,6 +136,8 @@ function initBoard() {
         boardState.push(div);
         board === null || board === void 0 ? void 0 : board.appendChild(div);
     }
+    placeNewTiles();
+    updateScreen();
 }
 function generateTile(num) {
     var div = document.createElement("div");
@@ -279,6 +277,9 @@ function placeNewTiles() {
     }
     var position1 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
     var position2 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
+    while (position1 == position2) {
+        position2 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
+    }
     boardState[position1] = newSquare1;
     boardState[position2] = newSquare2;
 }

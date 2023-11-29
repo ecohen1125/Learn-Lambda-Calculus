@@ -131,13 +131,9 @@ document.addEventListener("keydown", (event) => {
 });
 
 function updateScreen(): void {
-  // console.log(boardState);
   let boardChildren = board?.childNodes;
   console.log(boardChildren);
   board.replaceChildren(); 
-  // boardChildren.forEach((child, i) => {
-  //   board?.replaceChild(child, []);
-  // });
 
   boardState.forEach((tile) => {
     board?.appendChild(tile);
@@ -150,6 +146,9 @@ function initBoard(): void {
     boardState.push(div);
     board?.appendChild(div);
   }
+
+  placeNewTiles();
+  updateScreen();
 }
 
 function generateTile(num: Number): HTMLDivElement {
@@ -283,6 +282,9 @@ function placeNewTiles(): void {
 
   let position1 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
   let position2 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
+  while (position1 == position2) {
+    position2 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
+  }
 
   boardState[position1] = newSquare1;
   boardState[position2] = newSquare2;

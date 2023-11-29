@@ -1,11 +1,9 @@
 .left {
     text-align: left;
-    /* margin-left: 40%; */
 }
 
 .center {
     width: 150px;
-    /* text-align: center; */
     margin: 0 42% auto;
 }
 
@@ -33,9 +31,20 @@ h1 {
 
 .left2 {
     text-align: left;
-    /* margin-left: 10%; */
 }
 
-/* .play {
+.play {
+    background-color: #8C111B;
+    border: none;
+    border-radius: 25%;
+    padding: 10px;
+    font-size: large;
+    font-weight: bold;
+    width: 10%;
+    cursor: pointer;
+}
 
-} */
+.play:hover {
+    background-color: black;
+    color: #8C111B;
+}
