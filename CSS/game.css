@@ -13,7 +13,7 @@ h1 {
     width: 23%;
     margin: 1%;
     background-color: gray;
-    color: white;
+    color: gray;
     border-radius: 15px;
     height: 100px;
     display: flex;
@@ -29,9 +29,133 @@ h1 {
     height: 100px;
     display: flex;
     align-items: center;
+    font-weight: bold;
 }
 
 .innerText {
     text-align: center;
     width: 100%;
+}
+
+.tag {
+    display: none;
+}
+
+.checkBox-align {
+    display: flex;
+    size: 100px;
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+}
+
+#colorMode {
+    height: 25px;
+    width: 25px;
+    margin: 0;
+    margin-right: 5px;
+}
+
+.checkbox-text {
+    margin: 0;
+    font-size: large;
+    padding-top: 3px;
+    font-weight: bold;
+}
+
+.two {
+    background-color: #EEE4DA;
+    color: black;
+}
+
+.four {
+    background-color: #EDE0C8;
+    color: black;
+}
+
+.eight {
+    background-color: #F2B179;
+}
+
+.sixteen {
+    background-color: #F59563;
+}
+
+.thirtyTwo {
+    background-color: #F67C5F;
+}
+
+.sixtyFour {
+    background-color: #F65E3B;
+}
+
+.oneTwentyEight {
+    background-color: #EDCF72;
+}
+
+.twoFiftySix {
+    background-color: #EDCC61;
+}
+
+.fiveOneTwo {
+    background-color: #EDC850;
+}
+
+.oneZeroTwoFour {
+    background-color: #EDC53F;
+}
+
+.twoZeroFourEight {
+    background-color: #EDC22E;
+}
+
+.gameOver {
+    font-size: 40px;
+}
+
+#restart {
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 25%;
+    padding: 10px;
+    font-size: large;
+    font-weight: bold;
+    width: 60%;
+    cursor: pointer;
+}
+
+#restart:hover {
+    background-color: white;
+    color: #008080;
+}
+
+.scoreText {
+    font-size: 20px;
+}
+
+#lose {
+    position: absolute;
+    width: 20%;
+    height: 25%;
+    left: 37%;
+    top: 35%;
+    text-align: center;
+    padding: 3%;
+    border-radius: 15px;
+    background-color: #C8A2C8;
+    color: white;
+}
+
+#win {
+    position: absolute;
+    width: 20%;
+    height: 25%;
+    left: 37%;
+    top: 35%;
+    text-align: center;
+    padding: 3%;
+    border-radius: 15px;
+    background-color: #C8A2C8;
+    color: white;
 }

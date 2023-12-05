@@ -1,4 +1,15 @@
 let board = document.getElementById("board")!;
+let colorMode = document.querySelector("#colorMode") as HTMLInputElement;
+let loseMenu = document.getElementById("lose")!;
+let winMenu = document.getElementById("win")!;
+
+colorMode.addEventListener("change", () => {
+  if (colorMode.checked) {
+    addColor();
+  } else {
+    removeColor();
+  }
+});
 
 // create a blank tile to duplicate
 function getBlankTile(): HTMLDivElement {
@@ -23,6 +34,19 @@ let twosCount: number = 0,
   oneZeroTwoFourCount: number = 0,
   twoZeroFourEightCount: number = 0;
 
+// const twos = {
+//   vars: ["2", "(+ 1 1)", "(* 2 1)", "(/ 4 2)", "(expt 2 1)"],
+//   lambdas: [
+//     "(λ (x) (+ x 0))",
+//     "(λ (x) (* x 1))",
+//     "(λ (x) (/ x 1))",
+//     "(λ (x) (x))",
+//     "(λ (x) (- 0 x))",
+//   ],
+// };
+
+// console.log("Twos: \n Vars: " + twos.vars + "\n Lambdas: " + twos.lambdas);
+
 // Vars
 let twoVars: string[] = ["2", "(+ 1 1)", "(* 2 1)", "(/ 4 2)", "(expt 2 1)"];
 let fourVars: string[] = ["4", "(+ 2 2)", "(* 2 2)", "(/ 8 2)", "(expt 2 2)"];
@@ -41,13 +65,7 @@ let thirtyTwoVars: string[] = [
   "(/ 64 2)",
   "(expt 2 5)",
 ];
-let sixtyFourVars: string[] = [
-  "64",
-  "(+ 32 32)",
-  "(* 2 32)",
-  "(/ 128 2)",
-  "(expt 2 6)",
-];
+let sixtyFourVars: string[] = [];
 let oneTwentyEightVars: string[] = [
   "128",
   "(+ 64 64)",
@@ -83,7 +101,7 @@ let twoZeroFourEightVars: string[] = [
   "(/ 4096 2)",
   "(expt 2 11)",
 ];
-  
+
 // Lambdas
 let twoLambdas: string[] = [
   "(λ (x) (+ x 0))",
@@ -130,10 +148,37 @@ document.addEventListener("keydown", (event) => {
   }
 });
 
+function numToString(num: Number): string {
+  switch (num) {
+    case 2:
+      return "two";
+    case 4:
+      return "four";
+    case 8:
+      return "eight";
+    case 16:
+      return "sixteen";
+    case 32:
+      return "thirtyTwo";
+    case 64:
+      return "sixtyFour";
+    case 128:
+      return "oneTwentyEight";
+    case 256:
+      return "twoFiftySix";
+    case 512:
+      return "fiveOneTwo";
+    case 1024:
+      return "oneZeroTwoFour";
+    case 2048:
+      return "twoZeroFourEight";
+    default:
+      return "blank";
+  }
+}
+
 function updateScreen(): void {
-  let boardChildren = board?.childNodes;
-  console.log(boardChildren);
-  board.replaceChildren(); 
+  board.replaceChildren();
 
   boardState.forEach((tile) => {
     board?.appendChild(tile);
@@ -149,6 +194,9 @@ function initBoard(): void {
 
   placeNewTiles();
   updateScreen();
+
+  loseMenu.style.display = "none";
+  winMenu.style.display = "none";
 }
 
 function generateTile(num: Number): HTMLDivElement {
@@ -156,6 +204,11 @@ function generateTile(num: Number): HTMLDivElement {
   div.classList.add("tile");
   let p = document.createElement("p");
   p.classList.add("innerText");
+  div.dataset.value = num.toString();
+
+  if (colorMode.checked) {
+    div.classList.add(numToString(num));
+  }
 
   switch (num) {
     case 2:
@@ -266,19 +319,29 @@ function generateTile(num: Number): HTMLDivElement {
 }
 
 function placeNewTiles(): void {
-  let newSquare1 = generateTile(2);
-  let newSquare2 = generateTile(2);
-  let blankIndexes = boardState.map((tile, i) => { 
-    if (tile.classList.contains("blankTile")) {
-      return i;
-    } else{
-      return -1;
-    }
-  }).filter((index) => index != -1);
+  let blankIndexes = boardState
+    .map((tile, i) => {
+      if (tile.classList.contains("blankTile")) {
+        return i;
+      } else {
+        return -1;
+      }
+    })
+    .filter((index) => index != -1);
 
+  if (blankIndexes.length == 1) {
+    let newSquare1 = generateTile(2);
+    let position1 = blankIndexes[0];
+    boardState[position1] = newSquare1;
+    return;
+  }
+  
   if (blankIndexes.length == 0) {
     return;
   }
+
+  let newSquare1 = generateTile(2);
+  let newSquare2 = generateTile(2);
 
   let position1 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
   let position2 = blankIndexes[Math.floor(Math.random() * blankIndexes.length)];
@@ -291,86 +354,18 @@ function placeNewTiles(): void {
 }
 
 function checkMatch(tile1: HTMLElement, tile2: HTMLElement): HTMLDivElement {
-  if (
-    (twoVars.indexOf(tile1.innerText) >= 0 &&
-      twoLambdas.indexOf(tile2.innerText) >= 0) ||
-    (twoVars.indexOf(tile2.innerText) >= 0 &&
-      twoLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(4);
-  } else if (
-    (fourVars.indexOf(tile1.innerText) >= 0 &&
-      fourLambdas.indexOf(tile2.innerText) >= 0) ||
-    (fourVars.indexOf(tile2.innerText) >= 0 &&
-      fourLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(8);
-  } else if (
-    (eightVars.indexOf(tile1.innerText) >= 0 &&
-      eightLambdas.indexOf(tile2.innerText) >= 0) ||
-    (eightVars.indexOf(tile2.innerText) >= 0 &&
-      eightLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(16);
-  } else if (
-    (sixteenVars.indexOf(tile1.innerText) >= 0 &&
-      sixteenLambdas.indexOf(tile2.innerText) >= 0) ||
-    (sixteenVars.indexOf(tile2.innerText) >= 0 &&
-      sixteenLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(32);
-  } else if (
-    (thirtyTwoVars.indexOf(tile1.innerText) >= 0 &&
-      thirtyTwoLambdas.indexOf(tile2.innerText) >= 0) ||
-    (thirtyTwoVars.indexOf(tile2.innerText) >= 0 &&
-      thirtyTwoLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(64);
-  } else if (
-    (sixtyFourVars.indexOf(tile1.innerText) >= 0 &&
-      sixtyFourLambdas.indexOf(tile2.innerText) >= 0) ||
-    (sixtyFourVars.indexOf(tile2.innerText) >= 0 &&
-      sixtyFourLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(128);
-  } else if (
-    (oneTwentyEightVars.indexOf(tile1.innerText) >= 0 &&
-      oneTwentyEightLambdas.indexOf(tile2.innerText) >= 0) ||
-    (oneTwentyEightVars.indexOf(tile2.innerText) >= 0 &&
-      oneTwentyEightLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(256);
-  } else if (
-    (twoFiftySixVars.indexOf(tile1.innerText) >= 0 &&
-      twoFiftySixLambdas.indexOf(tile2.innerText) >= 0) ||
-    (twoFiftySixVars.indexOf(tile2.innerText) >= 0 &&
-      twoFiftySixLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(512);
-  } else if (
-    (fiveTwelveVars.indexOf(tile1.innerText) >= 0 &&
-      fiveTwelveLambdas.indexOf(tile2.innerText) >= 0) ||
-    (fiveTwelveVars.indexOf(tile2.innerText) >= 0 &&
-      fiveTwelveLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(1024);
-  } else if (
-    (oneZeroTwoFourVars.indexOf(tile1.innerText) >= 0 &&
-      oneZeroTwoFourLambdas.indexOf(tile2.innerText) >= 0) ||
-    (oneZeroTwoFourVars.indexOf(tile2.innerText) >= 0 &&
-      oneZeroTwoFourLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    return generateTile(2048);
-  } else if (
-    (twoZeroFourEightVars.indexOf(tile1.innerText) >= 0 &&
-      twoZeroFourEightLambdas.indexOf(tile2.innerText) >= 0) ||
-    (twoZeroFourEightVars.indexOf(tile2.innerText) >= 0 &&
-      twoZeroFourEightLambdas.indexOf(tile1.innerText) >= 0)
-  ) {
-    win();
-    let div = document.createElement("div");
-    div.classList.add("no");
-    return div;
+  let tag1 = tile1.dataset.value;
+  let tag2 = tile2.dataset.value;
+
+  if (tag1 == tag2) {
+    if (Number(tag1) * 2 == 2048) {
+      win();
+      let div = document.createElement("div");
+      div.classList.add("no");
+      return div;
+    }
+    let newTile = generateTile(Number(tag1) * 2);
+    return newTile;
   } else {
     let div = document.createElement("div");
     div.classList.add("no");
@@ -416,7 +411,7 @@ function moveLeft(): void {
           getBlankTile(),
           ...boardState.slice(i + 1),
         ];
-        
+
         boardState = newBoardState;
       } else if (
         boardState[i - 1].classList.contains("blankTile") &&
@@ -481,8 +476,9 @@ function moveLeft(): void {
         let matched = checkMatch(tile, boardState[i - 3]);
         if (matched.classList.contains("tile")) {
           const newBoardState = [
-            ...boardState.slice(0, i - 2),
+            ...boardState.slice(0, i - 3),
             matched,
+            getBlankTile(),
             getBlankTile(),
             getBlankTile(),
             ...boardState.slice(i + 1),
@@ -491,9 +487,10 @@ function moveLeft(): void {
           boardState = newBoardState;
         } else {
           const newBoardState = [
-            ...boardState.slice(0, i - 2),
+            ...boardState.slice(0, i - 3),
             boardState[i - 3],
             tile,
+            getBlankTile(),
             getBlankTile(),
             ...boardState.slice(i + 1),
           ];
@@ -544,14 +541,461 @@ function moveLeft(): void {
 
   placeNewTiles();
   updateScreen();
+
+  lose();
 }
 
-function moveRight(): void {}
+function moveRight(): void {
+  boardState.forEach((tile, i) => {
+    if (tile.classList.contains("blankTile") || i % 4 == 3) {
+      return;
+    } else if (i % 4 == 2) {
+      if (boardState[i + 1].classList.contains("blankTile")) {
+        const newBoardState = [
+          ...boardState.slice(0, i),
+          getBlankTile(),
+          tile,
+          ...boardState.slice(i + 2),
+        ];
 
-function moveUp(): void {}
+        boardState = newBoardState;
+      } else {
+        let matched = checkMatch(tile, boardState[i + 1]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 2),
+          ];
+          boardState = newBoardState;
+        }
+      }
+    } else if (i % 4 == 1) {
+      if (
+        boardState[i + 1].classList.contains("blankTile") &&
+        boardState[i + 2].classList.contains("blankTile")
+      ) {
+        const newBoardState = [
+          ...boardState.slice(0, i),
+          getBlankTile(),
+          getBlankTile(),
+          tile,
+          ...boardState.slice(i + 3),
+        ];
 
-function moveDown(): void {}
+        boardState = newBoardState;
+      } else if (
+        boardState[i + 1].classList.contains("blankTile") &&
+        boardState[i + 2].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i + 2]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 3),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            tile,
+            boardState[i + 2],
+            ...boardState.slice(i + 3),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else {
+        let matched = checkMatch(tile, boardState[i + 1]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 2),
+          ];
+
+          boardState = newBoardState;
+        }
+      }
+    } else if (i % 4 == 0) {
+      if (
+        boardState[i + 1].classList.contains("blankTile") &&
+        boardState[i + 2].classList.contains("blankTile") &&
+        boardState[i + 3].classList.contains("blankTile")
+      ) {
+        const newBoardState = [
+          ...boardState.slice(0, i),
+          getBlankTile(),
+          getBlankTile(),
+          getBlankTile(),
+          tile,
+          ...boardState.slice(i + 4),
+        ];
+
+        boardState = newBoardState;
+      } else if (
+        boardState[i + 1].classList.contains("blankTile") &&
+        boardState[i + 2].classList.contains("blankTile") &&
+        boardState[i + 3].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i + 3]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            getBlankTile(),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 4),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            getBlankTile(),
+            tile,
+            boardState[i + 3],
+            ...boardState.slice(i + 4),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else if (
+        boardState[i + 1].classList.contains("blankTile") &&
+        boardState[i + 2].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i + 2]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 3),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            tile,
+            boardState[i + 2],
+            ...boardState.slice(i + 3),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else {
+        let matched = checkMatch(tile, boardState[i + 1]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i),
+            getBlankTile(),
+            matched,
+            ...boardState.slice(i + 2),
+          ];
+
+          boardState = newBoardState;
+        }
+      }
+    }
+  });
+
+  placeNewTiles();
+  updateScreen();
+
+  lose();
+}
+
+function moveUp(): void {
+  boardState.forEach((tile, i) => {
+    if (tile.classList.contains("blankTile") || i / 4 < 1) {
+      return;
+    } else if (2 > i / 4 && i / 4 >= 1) {
+      if (boardState[i - 4].classList.contains("blankTile")) {
+        const newBoardState = [
+          ...boardState.slice(0, i - 4),
+          tile,
+          ...boardState.slice(i - 3, i),
+          getBlankTile(),
+          ...boardState.slice(i + 1),
+        ];
+
+        boardState = newBoardState;
+      } else {
+        let matched = checkMatch(tile, boardState[i - 4]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 4),
+            matched,
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+          boardState = newBoardState;
+        }
+      }
+    } else if (3 > i / 4 && i / 4 >= 2) {
+      if (
+        boardState[i - 4].classList.contains("blankTile") &&
+        boardState[i - 8].classList.contains("blankTile")
+      ) {
+        const newBoardState = [
+          ...boardState.slice(0, i - 8),
+          tile,
+          ...boardState.slice(i - 7, i - 4),
+          getBlankTile(),
+          ...boardState.slice(i - 3, i),
+          getBlankTile(),
+          ...boardState.slice(i + 1),
+        ];
+
+        boardState = newBoardState;
+      } else if (
+        boardState[i - 4].classList.contains("blankTile") &&
+        boardState[i - 8].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i - 8]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 8),
+            matched,
+            ...boardState.slice(i - 7, i - 4),
+            getBlankTile(),
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i - 8),
+            boardState[i - 8],
+            ...boardState.slice(i - 7, i - 4),
+            tile,
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else {
+        let matched = checkMatch(tile, boardState[i - 4]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 4),
+            matched,
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        }
+      }
+    } else if (i / 4 >= 3) {
+      if (
+        boardState[i - 4].classList.contains("blankTile") &&
+        boardState[i - 8].classList.contains("blankTile") &&
+        boardState[i - 12].classList.contains("blankTile")
+      ) {
+        const newBoardState = [
+          ...boardState.slice(0, i - 12),
+          tile,
+          ...boardState.slice(i - 11, i - 8),
+          getBlankTile(),
+          ...boardState.slice(i - 7, i - 4),
+          getBlankTile(),
+          ...boardState.slice(i - 3, i),
+          getBlankTile(),
+          ...boardState.slice(i + 1),
+        ];
+
+        boardState = newBoardState;
+      } else if (
+        boardState[i - 4].classList.contains("blankTile") &&
+        boardState[i - 8].classList.contains("blankTile") &&
+        boardState[i - 12].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i - 12]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 12),
+            matched,
+            ...boardState.slice(i - 11, i - 8),
+            getBlankTile(),
+            ...boardState.slice(i - 7, i - 4),
+            getBlankTile(),
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i - 12),
+            boardState[i - 12],
+            ...boardState.slice(i - 11, i - 8),
+            tile,
+            ...boardState.slice(i - 7, i - 4),
+            getBlankTile(),
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else if (
+        boardState[i - 4].classList.contains("blankTile") &&
+        boardState[i - 8].classList.contains("tile")
+      ) {
+        let matched = checkMatch(tile, boardState[i - 8]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 8),
+            matched,
+            ...boardState.slice(i - 7, i - 4),
+            getBlankTile(),
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        } else {
+          const newBoardState = [
+            ...boardState.slice(0, i - 8),
+            boardState[i - 8],
+            ...boardState.slice(i - 7, i - 4),
+            tile,
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        }
+      } else {
+        let matched = checkMatch(tile, boardState[i - 4]);
+        if (matched.classList.contains("tile")) {
+          const newBoardState = [
+            ...boardState.slice(0, i - 4),
+            matched,
+            ...boardState.slice(i - 3, i),
+            getBlankTile(),
+            ...boardState.slice(i + 1),
+          ];
+
+          boardState = newBoardState;
+        }
+      }
+    }
+  });
+
+  placeNewTiles();
+  updateScreen();
+
+  lose();
+}
+
+function moveDown(): void {
+
+  placeNewTiles();
+  updateScreen();
+
+  lose();
+}
+
+function addColor(): void {
+  boardState.forEach((tile) => {
+    if (tile.classList.contains("blankTile")) {
+      return;
+    }
+    tile.classList.add(numToString(Number(tile.dataset.value)));
+  });
+}
+
+function removeColor(): void {
+  boardState.forEach((tile) => {
+    if (tile.classList.contains("blankTile")) {
+      return;
+    }
+    tile.classList.remove(numToString(Number(tile.dataset.value)));
+  });
+}
+
+function checkIfGameOver(): boolean {
+  let tiles = boardState
+    .map((tile, i) => {
+      if (tile.classList.contains("tile")) {
+        return i;
+      } else {
+        return -1;
+      }
+    })
+    .filter((index) => index != -1);
+  
+  if (
+    boardState.filter((tile) => tile.classList.contains("blankTile")).length != 0
+  ) {
+    return false;
+  } else {
+    tiles.forEach((index) => {
+      if (index - 4 >= 1) {
+        let matchedUp = checkMatch(boardState[index], boardState[index - 4]);
+        if (matchedUp.classList.contains("tile")) {
+          return false;
+        }
+      }
+      if (index + 4 < 16) {
+        let matchedDown = checkMatch(boardState[index], boardState[index + 4]);
+        if (matchedDown.classList.contains("tile")) {
+          return false;
+        }
+      }
+      if (index % 4 != 0) {
+        let matchedLeft = checkMatch(boardState[index], boardState[index - 1]);
+        if (matchedLeft.classList.contains("tile")) {
+          return false;
+        }
+      }
+      if (index % 4 != 3) {
+        let matchedRight = checkMatch(boardState[index], boardState[index + 1]);
+        if (matchedRight.classList.contains("tile")) {
+          return false;
+        }
+      }
+    });
+  }
+  return true;
+}
 
 function win(): void {
-  alert("You win!");
+  winMenu.style.display = "block";
+}
+
+function lose(): void {
+  if (checkIfGameOver()) {
+    let highestLevel = Math.max(...boardState.map((tile) => Number(tile.dataset.value)));
+    let score = document.getElementById("score")!;
+    score.innerText = String(highestLevel);
+    console.log(highestLevel);
+    loseMenu.style.display = "block";
+  } else {
+    loseMenu.style.display = "none";
+  }
 }
