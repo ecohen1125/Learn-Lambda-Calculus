@@ -4,7 +4,7 @@ h1 {
 
 #board {
     border: 2px solid black;
-    width: 50%;
+    width: 75%;
     display: flex;
     flex-wrap: wrap;
 }
@@ -113,7 +113,7 @@ h1 {
     font-size: 40px;
 }
 
-#restart {
+#restartLose {
     background-color: #008080;
     color: white;
     border: none;
@@ -125,7 +125,24 @@ h1 {
     cursor: pointer;
 }
 
-#restart:hover {
+#restartWin {
+    background-color: #008080;
+    color: white;
+    border: none;
+    border-radius: 25%;
+    padding: 10px;
+    font-size: large;
+    font-weight: bold;
+    width: 60%;
+    cursor: pointer;
+}
+
+#restartLose:hover {
+    background-color: white;
+    color: #008080;
+}
+
+#restartWin:hover {
     background-color: white;
     color: #008080;
 }
